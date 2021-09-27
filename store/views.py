@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 
 from .models import Album
 # Create your views here.
@@ -9,6 +9,7 @@ def index(request):
         available=True).order_by('created_at')[:12]
     # albums = ["{}".format(album) for album in all_albums]
     context = {'albums': albums}
+    machintruc
     return render(request, 'store/index.html', context)
 
 
@@ -20,7 +21,7 @@ def listing(request):
 
 
 def detail(request, album_id):
-    album = Album.objects.get(pk=album_id)
+    album = get_object_or_404(Album, pk=album_id)
     # artists = " ".join([artist.name for artist in album.artists.all()])
     context = {
         'album_title': album.title,
