@@ -1,2 +1,3 @@
 {% extends 'store/base.html' %} {% block content %} Voici une liste de nos
-albums : {% include 'store/list.html' %} {% endblock %}
+albums : {% include 'store/list.html' with list_title="Nos derniers albums" %}
+{% endblock %}
