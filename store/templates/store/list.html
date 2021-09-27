@@ -1,5 +1,23 @@
-<ul>
+<div class="container">
   {% for album in albums %}
-  <li>{{album.title}}</li>
+  <div class="col-sm-4 text-center">
+    <a href="{% url 'store:detail' album_id=album.id %}">
+      <img
+        class="img-responsive"
+        src="{{album.picture}}"
+        alt="{{ album.title }}"
+        style="
+          height: 340px;
+          width: 340px;
+          object-fit: cover;
+          background-size: cover;
+        "
+      />
+    </a>
+    <h3><a href="/">{{ album.title }}</a></h3>
+    {% for artist in album.artists.all %}
+    <p>{{ artist.name }}</p>
+    {% endfor %}
+  </div>
   {% endfor %}
-</ul>
+</div>

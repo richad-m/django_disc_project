@@ -22,7 +22,7 @@ class Album(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     available = models.BooleanField(default=True)  # True by default
     title = models.CharField(max_length=200)
-    picture = models.URLField()
+    picture = models.URLField(default='https://picsum.photos/seed/picsum/200')
     artists = models.ManyToManyField(Artist, related_name="albums", blank=True)
 
     def __str__(self) -> str:

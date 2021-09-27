@@ -7,9 +7,9 @@ from .models import Album, Artist, Contact, Booking
 
 
 def index(request):
-    all_albums = Album.objects.filter(
+    albums = Album.objects.filter(
         available=True).order_by('created_at')[:12]
-    albums = ["{}".format(album) for album in all_albums]
+    # albums = ["{}".format(album) for album in all_albums]
     context = {'albums': albums}
     template = loader.get_template('store/index.html')
     return HttpResponse(template.render(context, request=request))
