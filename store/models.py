@@ -26,7 +26,7 @@ class Album(models.Model):
     artists = models.ManyToManyField(Artist, related_name="albums", blank=True)
 
     def __str__(self) -> str:
-        return "{} de {}".format(self.title, self.artists)
+        return "{}".format(self.title)
 
 
 class Booking(models.Model):

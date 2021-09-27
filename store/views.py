@@ -9,10 +9,10 @@ from .models import Album, Artist, Contact, Booking
 def index(request):
     all_albums = Album.objects.filter(
         available=True).order_by('created_at')[:12]
-    albums = ["<li>{}</li>".format(album.title) for album in all_albums]
-    # message = """<ul>{}</ul>""".format("\n".join(albums))
+    albums = ["{}".format(album) for album in all_albums]
+    context = {'albums': albums}
     template = loader.get_template('store/index.html')
-    return HttpResponse(template.render(request=request))
+    return HttpResponse(template.render(context, request=request))
 
 
 def listing(request):
