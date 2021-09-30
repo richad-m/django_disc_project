@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from .models import Album
+from .models import Album, Contact, Booking
 # Create your views here.
 
 
@@ -31,10 +31,34 @@ def listing(request):
 
 def detail(request, album_id):
     album = get_object_or_404(Album, pk=album_id)
+    artists_name = album.artists.all()[0].name
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        name = request.POST.get("name")
+
+        contact = Contact.objects.filter(email=email)
+        if not contact.exists():
+            # If the contact does not exist, create one
+            contact = Contact.objects.create(email=email, name=name)
+        # If the album does not exsits, render 404
+        album = get_object_or_404(Album, id=album_id)
+        # Create Booking with contact and album
+        booking = Booking.objects.create(contact=contact, album=album)
+        # Set availabiliy of album to false and save in DB
+        album.available = False
+        album.save()
+        context = {
+            'name': name,
+            'email': email,
+            'album': album,
+            'artist': artists_name,
+        }
+        return render(request, 'store/thanks.html', context)
     context = {
         'album_title': album.title,
-        'album_id': album.id,
-        'thumbnail': album.picture
+        'albumid': album.id,
+        'thumbnail': album.picture,
+        'artists_name': artists_name
     }
     return render(request, 'store/detail.html', context)
 
