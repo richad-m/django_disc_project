@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from .models import Album, Contact, Booking
+from .forms import ContactForm
 # Create your views here.
 
 
@@ -30,36 +31,50 @@ def listing(request):
 
 
 def detail(request, album_id):
-    album = get_object_or_404(Album, pk=album_id)
-    artists_name = album.artists.all()[0].name
-    if request.method == 'POST':
-        email = request.POST.get('email')
-        name = request.POST.get("name")
 
-        contact = Contact.objects.filter(email=email)
-        if not contact.exists():
-            # If the contact does not exist, create one
-            contact = Contact.objects.create(email=email, name=name)
-        # If the album does not exsits, render 404
-        album = get_object_or_404(Album, id=album_id)
-        # Create Booking with contact and album
-        booking = Booking.objects.create(contact=contact, album=album)
-        # Set availabiliy of album to false and save in DB
-        album.available = False
-        album.save()
-        context = {
-            'name': name,
-            'email': email,
-            'album': album,
-            'artist': artists_name,
-        }
-        return render(request, 'store/thanks.html', context)
+    album = get_object_or_404(Album, pk=album_id)
+    artists = [artist.name for artist in album.artists.all()]
+    artists_name = " ".join(artists)
     context = {
         'album_title': album.title,
-        'albumid': album.id,
-        'thumbnail': album.picture,
-        'artists_name': artists_name
+        'artists_name': artists_name,
+        'album_id': album.id,
+        'thumbnail': album.picture
     }
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            name = form.cleaned_data['name']
+
+            contact = Contact.objects.filter(email=email)
+            if not contact.exists():
+                # If a contact is not registered, create a new one.
+                contact = Contact.objects.create(
+                    email=email,
+                    name=name
+                )
+            else:
+                contact = contact.first()
+
+            album = get_object_or_404(Album, id=album_id)
+            booking = Booking.objects.create(
+                contact=contact,
+                album=album
+            )
+            album.available = False
+            album.save()
+            context = {
+                'album_title': album.title
+            }
+            return render(request, 'store/thanks.html', context)
+        else:
+            # Form data doesn't match the expected format.
+            # Add errors to the template.
+            context['errors'] = form.errors.items()
+    else:
+        form = ContactForm()
+    context['form'] = form
     return render(request, 'store/detail.html', context)
 
 

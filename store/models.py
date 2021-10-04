@@ -15,6 +15,9 @@ class Contact(models.Model):
     email = models.EmailField(max_length=100)
     name = models.CharField(max_length=200)
 
+    def __str__(self) -> str:
+        return self.name
+
 
 class Album(models.Model):
     reference = models.IntegerField(null=True)  # Optional field
@@ -35,6 +38,9 @@ class Booking(models.Model):
     # Delete if contact is deleted
     contact = models.ForeignKey(Contact, on_delete=models.CASCADE)
     album = models.OneToOneField(Album, on_delete=models.CASCADE)
+
+    def __str__(self) -> str:
+        return "Album : {} by {}".format(self.album, self.contact)
 
 # ARTISTS = {
 #     'francis-cabrel': {'name': 'Francis Cabrel'},
